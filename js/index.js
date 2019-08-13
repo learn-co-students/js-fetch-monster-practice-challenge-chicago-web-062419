@@ -6,6 +6,7 @@ const monsterDiv = document.getElementById('create-monster')
 const monsterContainer = document.getElementById('monster-container')
 const backButton = document.getElementById('back')
 const forwardButton = document.getElementById('forward')
+let pageNumber = 1
 
 
 /////////////////// CREATE THE FORM ///////////////////////
@@ -35,34 +36,15 @@ const createForm = () => {
 ////////////////////////// FETCH THE MONSTERS ///////////////////////
 
 const getMonsters = (URL) => {
-    fetch(URL)
+    fetch(`${URL}/?_limit=50&_page=${pageNumber}`)
       .then(res => res.json())
       .then(monsters => {
-        let a = 0
-        let b = 50 
+        // let a = 0
+        // let b = 50 
         // let monster50 = monsters.slice(a, b)
-        monsters.slice(a,b).forEach(monster => {
+        monsters.forEach(monster => {
             renderMonster(monster)
         })
-
-        forwardButton.addEventListener("click", (event) => {
-            monsterContainer.innerHTML = ""
-            a += 50
-            b += 50
-            monsters.slice(a,b).forEach(monster => {
-                renderMonster(monster)})
-        })
-
-        backButton.addEventListener("click", (event) => {
-            if (a > 0) {
-                monsterContainer.innerHTML = ""
-                a -= 50
-                b -= 50 
-                monsters.slice(a,b).forEach(monster => {
-                    renderMonster(monster)})
-            }
-        })
-
       })
 }
 
@@ -115,11 +97,53 @@ const createMonster = (monster) => {
     })
 }
 
+const forward = () => {
+    forwardButton.addEventListener("click", (event) => {
+        event.preventDefault()
+        pageNumber++
+        monsterContainer.innerHTML = ""
+        getMonsters(URL)
+    })
+}
+
+const back = () => {
+    backButton.addEventListener("click", (event) => {
+        event.preventDefault()
+        if (pageNumber > 0) {
+            pageNumber--
+            monsterContainer.innerHTML = ""
+            getMonsters(URL)
+        }
+    })
+}
+
 
 ///////////////////// CALL ALL FUNCTIONS //////////////////////////
 
 createForm()
 getMonsters(URL)
+forward(URL)
+back(URL)
 
 
 
+
+//////////////////////////////// ORIGINAL CODE FOR THE FORWARD AND BACK /////////////////////
+
+        // forwardButton.addEventListener("click", (event) => {
+        //     monsterContainer.innerHTML = ""
+        //     a += 50
+        //     b += 50
+        //     monsters.slice(a,b).forEach(monster => {
+        //         renderMonster(monster)})
+        // })
+
+        // backButton.addEventListener("click", (event) => {
+        //     if (a > 0) {
+        //         monsterContainer.innerHTML = ""
+        //         a -= 50
+        //         b -= 50 
+        //         monsters.slice(a,b).forEach(monster => {
+        //             renderMonster(monster)})
+        //     }
+        // })
